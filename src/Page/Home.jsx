@@ -12,7 +12,7 @@ const Home = () => {
   const [modal, setModal] = useState(false);
   const [isPrority, SetIsPrority] = useState("");
   const [agreement, setAgreement] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(agreement);
+  //   const [isCompleted, setIsCompleted] = useState('');
   const { data, refetch } = useQuery({
     queryKey: ["taskData"],
     queryFn: async () => {
@@ -21,11 +21,12 @@ const Home = () => {
     },
   });
 
-  console.log(isCompleted);
-
-  const handleCheckBox = (e) => {
-    setIsCompleted(e.target.checked)
-  };
+  let isCompleted;
+  if (agreement) {
+    isCompleted = true;
+  } else {
+    isCompleted = false;
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -39,14 +40,14 @@ const Home = () => {
       isPrority,
       isCompleted,
     };
-    // axios.post("http://localhost:5000/tasks", taskData).then((res) => {
-    //   console.log(res.data);
-    //   if (res.data.insertedId) {
-    //     setModal(false);
-    //     refetch();
-    //     toast.success("Task added successfully ");
-    //   }
-    // });
+    axios.post("http://localhost:5000/tasks", taskData).then((res) => {
+      console.log(res.data);
+      if (res.data.insertedId) {
+        setModal(false);
+        refetch();
+        toast.success("Task added successfully ");
+      }
+    });
   };
   const handleDelete = async (id) => {
     const res = await axios.delete(`http://localhost:5000/task/${id}`);
@@ -91,14 +92,14 @@ const Home = () => {
                 <tr className="" key={item._id}>
                   <td className="text-center ">
                     <input
-                      onChange={handleCheckBox}
+                      onChange={(e) => {
+                        setAgreement(e.target.checked);
+                      }}
                       type="checkbox"
-                      name=""
-                      id=""
                     />
                   </td>
                   <td className=" text-center">
-                    {isCompleted ? "Completed" : "Pending"}{" "}
+                   
                   </td>
                   <td className=" text-center"> {item.title}</td>
                   <td className=" text-center"> {item.des}</td>

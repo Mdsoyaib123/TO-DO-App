@@ -23,7 +23,7 @@ const TaskEdit = () => {
     };
     console.log(taskData);
     axios
-      .patch(`http://localhost:5000/taskEdit/${loader._id}`, taskData)
+      .patch(`https://to-do-app-server-teal.vercel.app/taskEdit/${loader._id}`, taskData)
       .then((res) => {
         console.log(res.data);
         if (res.data.modifiedCount > 0) {

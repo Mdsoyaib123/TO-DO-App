@@ -13,16 +13,18 @@ const Home = () => {
   const [isPrority, SetIsPrority] = useState("");
   const [agreement, setAgreement] = useState(false);
 
-  // Fetch all Task 
+  // Fetch all Task
   const { data: AllData = [], refetch } = useQuery({
     queryKey: ["taskData"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:5000/tasks");
+      const res = await axios.get(
+        "https://to-do-app-server-teal.vercel.app/tasks"
+      );
       return res.data;
     },
   });
 
-  // Create task and store Database 
+  // Create task and store Database
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -35,31 +37,33 @@ const Home = () => {
       isPrority,
       isCompleted: "Pending",
     };
-    axios.post("http://localhost:5000/tasks", taskData).then((res) => {
-      console.log(res.data);
-      if (res.data.insertedId) {
-        setModal(false);
-        refetch();
-        toast.success("Task added successfully ");
-      }
-    });
+    axios
+      .post("https://to-do-app-server-teal.vercel.app/tasks", taskData)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.insertedId) {
+          setModal(false);
+          refetch();
+          toast.success("Task added successfully ");
+        }
+      });
   };
 
-
-// Filter task by Priority 
+  // Filter task by Priority
   const [priorityFilter, setPriorityFilter] = useState("All");
   const filteredData = AllData.filter((item) => {
     if (priorityFilter === "All") {
-      return true; 
+      return true;
     } else {
       return item.isPrority === priorityFilter;
     }
   });
 
-  
-// Delete task 
+  // Delete task
   const handleDelete = async (id) => {
-    const res = await axios.delete(`http://localhost:5000/task/${id}`);
+    const res = await axios.delete(
+      `https://to-do-app-server-teal.vercel.app/task/${id}`
+    );
     if (res.data.deletedCount > 0) {
       refetch();
       toast.success("Deleted Successfully");
@@ -67,12 +71,14 @@ const Home = () => {
     console.log(res.data);
   };
 
-
-  // Mark as Completed 
+  // Mark as Completed
   const checkData = { agreement };
   const handleCheck = (id) => {
     axios
-      .patch(`http://localhost:5000/isCompleted/${id}`, checkData)
+      .patch(
+        `https://to-do-app-server-teal.vercel.app/isCompleted/${id}`,
+        checkData
+      )
       .then((res) => {
         if (res.data.modifiedCount > 0) {
           refetch();
@@ -142,7 +148,7 @@ const Home = () => {
                     <input
                       className={`${
                         item.isCompleted === "Completed" ? "hidden" : ""
-                      }`}
+                      } `}
                       onChange={() => {
                         handleCheck(item._id);
                       }}

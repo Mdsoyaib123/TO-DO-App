@@ -24,7 +24,7 @@ const router = createBrowserRouter([
       {
         path:'/taskEdit/:id',
         element:<TaskEdit></TaskEdit>,
-        loader: ({params})=>fetch(`http://localhost:5000/taskById/${params.id}`)
+        loader: ({params})=>fetch(`https://to-do-app-server-teal.vercel.app/taskById/${params.id}`)
         
       }
       

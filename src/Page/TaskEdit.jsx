@@ -8,6 +8,8 @@ const TaskEdit = () => {
     const navigate = useNavigate()
   const [isPrority, SetIsPrority] = useState("");
 
+
+  // Update the task 
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;

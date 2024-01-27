@@ -11,10 +11,10 @@ import { RiDeleteBack2Line } from "react-icons/ri";
 const Home = () => {
   const [modal, setModal] = useState(false);
   const [isPrority, SetIsPrority] = useState("");
-
   const [agreement, setAgreement] = useState(false);
 
-  const { data, refetch } = useQuery({
+  // Fetch all Task 
+  const { data: AllData = [], refetch } = useQuery({
     queryKey: ["taskData"],
     queryFn: async () => {
       const res = await axios.get("http://localhost:5000/tasks");
@@ -22,14 +22,7 @@ const Home = () => {
     },
   });
 
-  // let isCompleted;
-
-  // if (agreement) {
-  //   isCompleted = true;
-  // } else {
-  //   isCompleted = false;
-  // }
-
+  // Create task and store Database 
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -51,6 +44,20 @@ const Home = () => {
       }
     });
   };
+
+
+// Filter task by Priority 
+  const [priorityFilter, setPriorityFilter] = useState("All");
+  const filteredData = AllData.filter((item) => {
+    if (priorityFilter === "All") {
+      return true; 
+    } else {
+      return item.isPrority === priorityFilter;
+    }
+  });
+
+  
+// Delete task 
   const handleDelete = async (id) => {
     const res = await axios.delete(`http://localhost:5000/task/${id}`);
     if (res.data.deletedCount > 0) {
@@ -60,10 +67,9 @@ const Home = () => {
     console.log(res.data);
   };
 
-  console.log(agreement);
 
+  // Mark as Completed 
   const checkData = { agreement };
-
   const handleCheck = (id) => {
     axios
       .patch(`http://localhost:5000/isCompleted/${id}`, checkData)
@@ -73,6 +79,7 @@ const Home = () => {
         }
       });
   };
+
   return (
     <div>
       <div className="max-w-7xl mx-auto">
@@ -80,20 +87,46 @@ const Home = () => {
           To Do List Application{" "}
         </h1>
         <div className="flex justify-between items-center">
-          <button
-            onClick={() => setModal(true)}
-            className="button border font-semibold px-4  py-2 hover:bg-base-300 rounded-md   "
-          >
-            Add Task{" "}
-          </button>
-          <p className="font-bold ">Total Task : {data?.length}</p>
+          <div>
+            <button
+              onClick={() => setModal(true)}
+              className="button border font-semibold px-4  py-2 hover:bg-base-300 rounded-md   "
+            >
+              Add Task{" "}
+            </button>
+          </div>
+          <div className=" flex items-center gap-2 mb-6">
+            <label className="text-black  font-semibold">
+              Filter by Priority:
+            </label>
+            <select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="border border-black  rounded-lg px-2 py-2"
+            >
+              <option value="All" className=" text-black font-bold">
+                All
+              </option>
+              <option className=" text-black font-bold" value="High">
+                {" "}
+                High
+              </option>
+              <option className=" text-black font-bold" value="Medium">
+                {" "}
+                Medium
+              </option>
+
+              <option className="font-bold text-black " value="Low">
+                Low
+              </option>
+            </select>
+          </div>
         </div>
         <div className="border-4 rounded-md border-purple-600 px-4 py-4 mt-4">
           <table className="table ">
             {/* head */}
             <thead>
               <tr className="text-lg font-bold text-black">
-                {/* <th>No.</th> */}
                 <th className="text-center ">Mark </th>
                 <th className="text-center ">Status</th>
                 <th className="text-center ">Title </th>
@@ -103,23 +136,20 @@ const Home = () => {
               </tr>
             </thead>
             <tbody>
-              {/* row 1 */}
-              {data?.map((item, index) => (
+              {filteredData?.map((item) => (
                 <tr className="" key={item._id}>
                   <td className="text-center ">
                     <input
                       className={`${
                         item.isCompleted === "Completed" ? "hidden" : ""
                       }`}
-                      onChange={(e) => {
+                      onChange={() => {
                         handleCheck(item._id);
                       }}
                       type="checkbox"
                     />
                   </td>
                   <td className={` text-center `}>
-                    {/* {isCompleted ? 'Completed' : 'Pending'} */}
-
                     <p
                       className={`${
                         item.isCompleted === "Completed"
@@ -136,7 +166,7 @@ const Home = () => {
                   </td>
                   <td className=" text-center"> {item.title}</td>
                   <td className=" text-center"> {item.des}</td>
-                  <td className=" text-center"> {item.isPrority}</td>
+                  <td className=" text-center">{item.isPrority}</td>
                   <td className="flex gap-5 justify-center ">
                     <Link
                       to={`/taskEdit/${item._id}`}

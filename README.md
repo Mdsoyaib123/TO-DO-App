@@ -4,5 +4,5 @@ This simple todo app with backend
 
 ## Live Link
 
-View this site -> https://redux-typescript-todo.netlify.app/
+View this site -> https://effortless-phoenix-7bb525.netlify.app
 

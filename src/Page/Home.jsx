@@ -11,8 +11,9 @@ import { RiDeleteBack2Line } from "react-icons/ri";
 const Home = () => {
   const [modal, setModal] = useState(false);
   const [isPrority, SetIsPrority] = useState("");
+
   const [agreement, setAgreement] = useState(false);
-  //   const [isCompleted, setIsCompleted] = useState('');
+
   const { data, refetch } = useQuery({
     queryKey: ["taskData"],
     queryFn: async () => {
@@ -21,12 +22,13 @@ const Home = () => {
     },
   });
 
-  let isCompleted;
-  if (agreement) {
-    isCompleted = true;
-  } else {
-    isCompleted = false;
-  }
+  // let isCompleted;
+
+  // if (agreement) {
+  //   isCompleted = true;
+  // } else {
+  //   isCompleted = false;
+  // }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -38,7 +40,7 @@ const Home = () => {
       title,
       des,
       isPrority,
-      isCompleted,
+      isCompleted: "Pending",
     };
     axios.post("http://localhost:5000/tasks", taskData).then((res) => {
       console.log(res.data);
@@ -57,6 +59,20 @@ const Home = () => {
     }
     console.log(res.data);
   };
+
+  console.log(agreement);
+
+  const checkData = { agreement };
+
+  const handleCheck = (id) => {
+    axios
+      .patch(`http://localhost:5000/isCompleted/${id}`, checkData)
+      .then((res) => {
+        if (res.data.modifiedCount > 0) {
+          refetch();
+        }
+      });
+  };
   return (
     <div>
       <div className="max-w-7xl mx-auto">
@@ -72,13 +88,13 @@ const Home = () => {
           </button>
           <p className="font-bold ">Total Task : {data?.length}</p>
         </div>
-        <div className="border-2 px-4 py-4 mt-4">
-          <table className="table table-zebra">
+        <div className="border-4 rounded-md border-purple-600 px-4 py-4 mt-4">
+          <table className="table ">
             {/* head */}
             <thead>
               <tr className="text-lg font-bold text-black">
                 {/* <th>No.</th> */}
-                <th className="text-center ">Mark/unMark </th>
+                <th className="text-center ">Mark </th>
                 <th className="text-center ">Status</th>
                 <th className="text-center ">Title </th>
                 <th className="text-center ">Description</th>
@@ -92,14 +108,31 @@ const Home = () => {
                 <tr className="" key={item._id}>
                   <td className="text-center ">
                     <input
+                      className={`${
+                        item.isCompleted === "Completed" ? "hidden" : ""
+                      }`}
                       onChange={(e) => {
-                        setAgreement(e.target.checked);
+                        handleCheck(item._id);
                       }}
                       type="checkbox"
                     />
                   </td>
-                  <td className=" text-center">
-                   
+                  <td className={` text-center `}>
+                    {/* {isCompleted ? 'Completed' : 'Pending'} */}
+
+                    <p
+                      className={`${
+                        item.isCompleted === "Completed"
+                          ? "bg-green-500 rounded-md  "
+                          : ""
+                      } ${
+                        item.isCompleted === "Pending"
+                          ? "bg-yellow-500 rounded-md  "
+                          : ""
+                      }`}
+                    >
+                      {item.isCompleted}
+                    </p>
                   </td>
                   <td className=" text-center"> {item.title}</td>
                   <td className=" text-center"> {item.des}</td>

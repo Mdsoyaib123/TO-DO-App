@@ -43,7 +43,7 @@ const TaskEdit = () => {
             className="w-full border py-2 px-3 rounded-md "
             type="text "
             required
-            defaultValue={loader.title}
+            value={loader.title}
             name="title"
             
             placeholder="Pedro Duarte"

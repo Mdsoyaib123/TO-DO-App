@@ -6,3 +6,5 @@ This simple todo app with backend
 
 View this site -> https://effortless-phoenix-7bb525.netlify.app
 
+### Key Technology are React and Node.js 
+
